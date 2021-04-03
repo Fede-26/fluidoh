@@ -13,6 +13,6 @@ This is a simple fluid simulation written in python using pygame.
 - Jos Stam: (https://www.dgp.toronto.edu/public_user/stam/reality/Research/pdf/GDC03.pdf)[https://www.dgp.toronto.edu/public_user/stam/reality/Research/pdf/GDC03.pdf]
 
 ## Screenshots
-
 ![](/screenshots/1.png)
 ![](/screenshots/2.png)
+![](/screenshots/3.png)
