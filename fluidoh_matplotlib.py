@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 from math import floor
 import random
-import pygame as pg
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+import matplotlib.cm as cm
+import pandas as pandas
+import numpy as np
+import seaborn as sns
 
 print("this is fluidoh :)")
 
 N = 128  #size
 iteration = 1
-SCALE = 4
-t = 0
 
 def IX(x, y):   #return the index in the array
     x = constrain(x, 0, N-1)
@@ -154,6 +157,8 @@ class Fluid:
     Vy0 = []
     Vz0 = []
 
+    rendered = []
+
     def __init__(self, dt, diffusion, viscosity):
         self.size = N
         self.dt = dt
@@ -168,6 +173,8 @@ class Fluid:
 
         self.Vx0 = [0] * N * N
         self.Vy0 = [0] * N * N
+
+        self.rendered = [[0.0]*N]*N
 
     def addDensity(self, x, y, amount):
         index = IX(x, y)
@@ -210,14 +217,18 @@ class Fluid:
 
         for i in range(N):
             for j in range(N):
-                x = i * SCALE
-                y = j * SCALE
                 d = self.density[IX(i, j)]
                 #fill((d + 50) % 255,200,d)
                 #noStroke()
                 #square(x, y, SCALE)
-                pg.draw.rect(scr, (constrain(d+50, 0, 255), constrain(d+50, 0, 255), constrain(d+50, 0, 255)), pg.Rect(x, y, SCALE, SCALE))
-    
+                
+                #pg.draw.rect(scr, (constrain(d+50, 0, 255), constrain(d+50, 0, 255), constrain(d+50, 0, 255)), pg.Rect(x, y, SCALE, SCALE))
+                print(d)
+                self.rendered[i][j] = d
+                print(self.rendered[i][j])
+        return self.rendered
+
+
     #add renderV and fadeD
     def fadeD(self):
         for i in range(0, len(self.density)):
@@ -226,33 +237,43 @@ class Fluid:
 
 
 fluid = Fluid(1, 0, 0.0000001)
-pg.init()
-scr = pg.display.set_mode((N*SCALE, N*SCALE))
-scr.fill((0,0,0))
-running = True
-while running: 
-    for event in pg.event.get(): 
-        if event.type == pg.QUIT: 
-            running = False
+fig, ax = plt.subplots(figsize=(N,N))
+#counter = 0
+#while counter< 50: 
+def htmap(index):
+
     #width, height = pg.display.get_surface().get_size()
     cx = int(0.5*N)
     cy = int(0.5*N)
+    cx = 5
 
     for i in range(-1, 2):
         for j in range(-1, 2):
-            fluid.addDensity(cx+i, cy+j, random.randrange(50, 150))
+            fluid.addDensity(cx+i, cy+j, random.randrange(100, 101))
 
     #for i in range(0, 2):
         #angle = noise
-    vx = 3 #random.randrange(-1, 1)
+    vx = 1 #random.randrange(-1, 1)
     vy = 0 #random.randrange(-1, 1)
-    t += 0.01
     fluid.addVelocity(cx, cy, vx, vy)
     
     fluid.step()
-    fluid.renderD()
-    #fluid.fadeD()
+    #fluid.fadeD()  
 
+    #counter += 1
 
-    pg.display.flip()
-pg.quit()
+    data = fluid.density
+    datam = []
+    for i in range(N):
+        coloumn = []
+        for j in range(N):
+            coloumn.append(data[IX(i, j)])
+        
+        datam.append(coloumn)
+
+    #print(datam)
+    #sns.heatmap(datam)
+
+    plt.imshow(datam, cmap='hot', interpolation='nearest')
+anim = animation.FuncAnimation(fig=fig, func=htmap, interval=1000, blit=False)
+plt.show()
