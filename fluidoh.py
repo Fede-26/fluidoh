@@ -5,9 +5,9 @@ import pygame as pg
 
 print("this is fluidoh :)")
 
-N = 64  #size
+N = 128  #size
 iteration = 1
-SCALE = 5
+SCALE = 4
 t = 0
 
 def IX(x, y):   #return the index in the array
@@ -251,7 +251,7 @@ while running:
     
     fluid.step()
     fluid.renderD()
-    fluid.fadeD()
+    #fluid.fadeD()
 
 
     pg.display.flip()
